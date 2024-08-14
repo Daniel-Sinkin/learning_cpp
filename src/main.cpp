@@ -2,6 +2,10 @@
 #include <stdexcept>
 #include <typeinfo>
 #include <cstdio>
+#include <fstream>
+
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 
 bool is_connected = false;
 
@@ -67,7 +71,7 @@ void print_connection_status()
     }
 }
 
-int main()
+void connection_testing()
 {
     print_connection_status();
     try
@@ -88,6 +92,26 @@ int main()
     }
 
     print_connection_status();
+}
+
+int main()
+{
+    std::string file_path = "/Users/danielsinkin/GitHub_private/learning_cpp/simple_dict.json";
+
+    { // Scope for file reading
+        std::ifstream file(file_path);
+        if (!file.is_open())
+        {
+            fprintf(stderr, "Failed to open file %s", file_path.c_str());
+            return 1;
+        }
+
+        json j;
+        file >> j;
+
+        std::cout << "Parse JSON data:\n"
+                  << j.dump(4) << std::endl;
+    }
 
     return 0;
 }
