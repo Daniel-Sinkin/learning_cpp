@@ -36,7 +36,6 @@ FetchContent_Declare(
   URL https://github.com/google/googletest/archive/refs/tags/release-1.12.1.tar.gz
   DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 )
-# For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
@@ -44,8 +43,6 @@ enable_testing()
 
 # Add the test executable
 add_executable(math_utils_test test/test_math_utils.cpp)
-
-# Link the test executable with GoogleTest and math_utils library
 target_link_libraries(math_utils_test gtest gtest_main math_utils)
 
 # Ensure the correct standard library is used for the test executable
@@ -60,3 +57,23 @@ gtest_discover_tests(math_utils_test)
 
 # Set output directory for executables
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+# Add Google Benchmark
+FetchContent_Declare(
+  benchmark
+  URL https://github.com/google/benchmark/archive/refs/tags/v1.8.0.tar.gz
+  DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+)
+FetchContent_MakeAvailable(benchmark)
+
+# Link benchmark with pthread if necessary
+find_package(Threads REQUIRED)
+
+# Add the benchmark executable
+add_executable(benchmark_example benchmark/benchmark_example.cpp)
+target_link_libraries(benchmark_example benchmark::benchmark math_utils Threads::Threads)
+target_compile_options(benchmark_example PRIVATE -stdlib=libc++)
+
+# Ensure the correct standard library is used for the benchmark executable
+target_include_directories(benchmark_example PRIVATE ${CMAKE_SOURCE_DIR}/src)
+
