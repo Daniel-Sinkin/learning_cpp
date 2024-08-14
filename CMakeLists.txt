@@ -47,6 +47,7 @@ FetchContent_Declare(
   GIT_REPOSITORY https://github.com/nlohmann/json.git
   GIT_TAG        v3.11.2  # Use the appropriate version
 )
+FetchContent_MakeAvailable(json)
 
 # Add the test executable
 add_executable(math_utils_test test/test_math_utils.cpp)
@@ -87,3 +88,5 @@ target_include_directories(benchmark_example PRIVATE ${CMAKE_SOURCE_DIR}/src)
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build, options are: Debug Release" FORCE)
 endif()
+
+target_link_libraries(SimpleProject PRIVATE nlohmann_json::nlohmann_json)
