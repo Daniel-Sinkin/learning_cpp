@@ -41,6 +41,13 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
+# Download the nlohmann/json library
+FetchContent_Declare(
+  json
+  GIT_REPOSITORY https://github.com/nlohmann/json.git
+  GIT_TAG        v3.11.2  # Use the appropriate version
+)
+
 # Add the test executable
 add_executable(math_utils_test test/test_math_utils.cpp)
 target_link_libraries(math_utils_test gtest gtest_main math_utils)
@@ -77,3 +84,6 @@ target_compile_options(benchmark_example PRIVATE -stdlib=libc++)
 # Ensure the correct standard library is used for the benchmark executable
 target_include_directories(benchmark_example PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build, options are: Debug Release" FORCE)
+endif()
