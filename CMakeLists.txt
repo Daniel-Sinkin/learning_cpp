@@ -44,11 +44,19 @@ enable_testing()
 
 # Add the test executable
 add_executable(math_utils_test test/test_math_utils.cpp)
+
+# Link the test executable with GoogleTest and math_utils library
 target_link_libraries(math_utils_test gtest gtest_main math_utils)
 
 # Ensure the correct standard library is used for the test executable
 target_compile_options(math_utils_test PRIVATE -stdlib=libc++)
 
+# Add the include directory for the math_utils_test target
+target_include_directories(math_utils_test PRIVATE ${CMAKE_SOURCE_DIR}/src)
+
 # Discover and register the tests
 include(GoogleTest)
 gtest_discover_tests(math_utils_test)
+
+# Set output directory for executables
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
