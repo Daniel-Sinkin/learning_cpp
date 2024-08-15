@@ -12,17 +12,24 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm64" OR CMAKE_OSX_ARCHITECTURES MATCHES "ar
     set(CMAKE_OSX_ARCHITECTURES "arm64")
 endif()
 
+# Compiler-specific warning flags
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    set(ALL_WARNINGS "-Wall" "-Wextra" "-Wpedantic")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    set(ALL_WARNINGS "/W4" "/permissive-")
+endif()
+
 # Add the main executable
 add_executable(SimpleProject src/main.cpp)
 
-# Ensure the correct standard library is used
-target_compile_options(SimpleProject PRIVATE -stdlib=libc++)
+# Ensure the correct standard library is used and add warnings
+target_compile_options(SimpleProject PRIVATE -stdlib=libc++ ${ALL_WARNINGS})
 
 # Add the math_utils library
 add_library(math_utils src/math_utils.cpp)
 
-# Ensure the correct standard library is used for the library
-target_compile_options(math_utils PRIVATE -stdlib=libc++)
+# Ensure the correct standard library is used for the library and add warnings
+target_compile_options(math_utils PRIVATE -stdlib=libc++ ${ALL_WARNINGS})
 
 # Set the CMake policy to the NEW behavior for DOWNLOAD_EXTRACT_TIMESTAMP
 if(POLICY CMP0135)
@@ -53,8 +60,8 @@ FetchContent_MakeAvailable(json)
 add_executable(math_utils_test test/test_math_utils.cpp)
 target_link_libraries(math_utils_test gtest gtest_main math_utils)
 
-# Ensure the correct standard library is used for the test executable
-target_compile_options(math_utils_test PRIVATE -stdlib=libc++)
+# Ensure the correct standard library is used for the test executable and add warnings
+target_compile_options(math_utils_test PRIVATE -stdlib=libc++ ${ALL_WARNINGS})
 
 # Add the include directory for the math_utils_test target
 target_include_directories(math_utils_test PRIVATE ${CMAKE_SOURCE_DIR}/src)
@@ -80,7 +87,7 @@ find_package(Threads REQUIRED)
 # Add the benchmark executable
 add_executable(benchmark_example benchmark/benchmark_example.cpp)
 target_link_libraries(benchmark_example benchmark::benchmark math_utils Threads::Threads)
-target_compile_options(benchmark_example PRIVATE -stdlib=libc++)
+target_compile_options(benchmark_example PRIVATE -stdlib=libc++ ${ALL_WARNINGS})
 
 # Ensure the correct standard library is used for the benchmark executable
 target_include_directories(benchmark_example PRIVATE ${CMAKE_SOURCE_DIR}/src)
